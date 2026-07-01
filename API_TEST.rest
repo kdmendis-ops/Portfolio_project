@@ -1,0 +1,198 @@
+@api = http://localhost:3000/api
+@server = http://localhost:3000
+
+### Signup: creates a new account and stores the user in the database.
+### Use this first so you have a real user for signin and user lookup tests.
+POST {{api}}/users
+Content-Type: application/json
+
+{
+    "name": "Test ",
+    "email": "test1@example.com",
+    "password": "password1234"
+}
+
+### Signin: verifies the email and password, then returns a JWT token.
+### Copy the `token` value from the response if you want to test protected routes.
+POST {{server}}/auth/signin
+Content-Type: application/json
+
+{
+    "email": "test+rest@example.com",
+    "password": "password123"
+}
+
+### Invalid signin: shows the error response when the password is wrong.
+### This confirms the backend rejects incorrect credentials.
+POST {{server}}/auth/signin
+Content-Type: application/json
+
+{
+    "email": "test+rest@example.com",
+    "password": "wrongpassword"
+}
+
+### Signout: clears the auth cookie so the current session is logged out.
+GET {{server}}/auth/signout
+
+### List users: returns all saved users with basic fields only.
+### Use this to confirm the signup request worked and to copy a real user id.
+GET {{api}}/users
+
+### Read user: fetches one user by id.
+### Replace `USER_ID` with an id from the list users response.
+@USER_ID = replace_with_user_id
+GET {{api}}/users/{{USER_ID}}
+
+### Protected example: sends a Bearer token to a route that requires authentication.
+### This is a pattern example only; it works only if your backend exposes `/api/protected`.
+GET {{server}}/api/protected
+Authorization: Bearer TOKEN_HERE
+
+### =========================
+### Contacts
+### =========================
+
+### Create contact: adds a new contact record.
+POST {{api}}/contacts
+Content-Type: application/json
+
+{
+    "firstname": "Jane",
+    "lastname": "Doe",
+    "email": "jane.doe@example.com"
+}
+
+### Invalid create contact: missing required fields should return a validation error.
+POST {{api}}/contacts
+Content-Type: application/json
+
+{
+    "firstname": "NoEmail"
+}
+
+### List contacts: returns all saved contacts (firstname, lastname, email only).
+### Use this to copy a real contact id for the read/update/delete requests below.
+GET {{api}}/contacts
+
+### Read contact: fetches one contact by id.
+### Replace `CONTACT_ID` with an id from the list contacts response.
+@CONTACT_ID = 6a454d2931396c7097a41aed
+GET {{api}}/contacts/{{CONTACT_ID}}
+
+### Update contact: updates fields on an existing contact.
+PUT {{api}}/contacts/{{CONTACT_ID}}
+Content-Type: application/json
+
+{
+    "lastname": "Smith"
+}
+
+### Delete contact: removes a single contact by id.
+DELETE {{api}}/contacts/{{CONTACT_ID}}
+
+### Delete all contacts: clears the contacts collection.
+DELETE {{api}}/contacts
+
+### =========================
+### Education (Qualifications)
+### =========================
+
+### Create qualification: adds a new education record.
+POST {{api}}/qualifications
+Content-Type: application/json
+
+{
+    "title": "BSc Computer Science",
+    "firstname": "Jane",
+    "lastname": "Doe",
+    "email": "jane.doe@example.com",
+    "completion": "2020-06-01",
+    "description": "Graduated with honors"
+}
+
+### Invalid create qualification: missing required fields should return a validation error.
+POST {{api}}/qualifications
+Content-Type: application/json
+
+{
+    "title": "Missing required fields"
+}
+
+### List qualifications: returns all saved education records.
+### Use this to copy a real qualification id for the read/update/delete requests below.
+GET {{api}}/qualifications
+
+### Read qualification: fetches one qualification by id.
+### Replace `QUALIFICATION_ID` with an id from the list qualifications response.
+@QUALIFICATION_ID = replace_with_qualification_id
+GET {{api}}/qualifications/{{QUALIFICATION_ID}}
+
+### Update qualification: updates fields on an existing qualification.
+PUT {{api}}/qualifications/{{QUALIFICATION_ID}}
+Content-Type: application/json
+
+{
+    "description": "Updated description"
+}
+
+### Delete qualification: removes a single qualification by id.
+DELETE {{api}}/qualifications/{{QUALIFICATION_ID}}
+
+### Delete all qualifications: clears the qualifications collection.
+DELETE {{api}}/qualifications
+
+### =========================
+### Projects
+### =========================
+
+### Create project: adds a new project record.
+POST {{api}}/projects
+Content-Type: application/json
+
+{
+    "title": "Portfolio Website",
+    "firstname": "Jane",
+    "lastname": "Doe",
+    "email": "jane.doe@example.com",
+    "completion": "2024-01-15",
+    "description": "Personal portfolio built with MERN"
+}
+
+### Invalid create project: missing required fields should return a validation error.
+POST {{api}}/projects
+Content-Type: application/json
+
+{
+    "title": "Missing required fields"
+}
+
+### List projects: returns all saved projects.
+### Use this to copy a real project id for the read/update/delete requests below.
+GET {{api}}/projects
+
+### Read project: fetches one project by id.
+### Replace `PROJECT_ID` with an id from the list projects response.
+@PROJECT_ID = replace_with_project_id
+GET {{api}}/projects/{{PROJECT_ID}}
+
+### Update project: updates fields on an existing project.
+PUT {{api}}/projects/{{PROJECT_ID}}
+Content-Type: application/json
+
+{
+    "description": "Updated description"
+}
+
+### Delete project: removes a single project by id.
+DELETE {{api}}/projects/{{PROJECT_ID}}
+
+### Delete all projects: clears the projects collection.
+DELETE {{api}}/projects
+
+### Notes:
+### - `{{server}}` points at the auth routes and root server endpoints.
+### - `{{api}}` points at the user, contact, qualification, and project CRUD routes.
+### - Replace `TOKEN_HERE` with the JWT returned by signin.
+### - Replace `USER_ID` / `CONTACT_ID` / `QUALIFICATION_ID` / `PROJECT_ID` with actual ids from their respective list requests.
+### - Make sure the server is running on localhost:3000 (npm start / node server.js) before running these requests.

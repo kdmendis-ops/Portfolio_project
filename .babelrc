@@ -1,0 +1,13 @@
+// The .babelrc file is a configuration file for Babel, which is a JavaScript compiler. It specifies the presets and plugins that Babel should use when transpiling your code. In this case, the preset used is "@babel/preset-env", which allows you to use the latest JavaScript features while ensuring compatibility with the current version of Node.js. The "targets" option specifies that the code should be transpiled to be compatible with the current version of Node.js.
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "current"
+                }
+            }
+        ]
+    ]
+}
