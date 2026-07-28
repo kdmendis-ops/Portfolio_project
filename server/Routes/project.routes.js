@@ -1,3 +1,4 @@
+// project.routes.js defines the CRUD API for portfolio projects.
 // Methods Urls Actions
 // GET api/projects get all projects
 // GET api/projects/:id get projects by id
@@ -12,6 +13,7 @@ const router = express.Router()
 
 router.route('/api/projects').post(projectCtrl.create)
 router.route('/api/projects').get(projectCtrl.list)
+// Runs before any :projectId route to fetch that project once and attach it to req.
 router.param('projectId', projectCtrl.projectByID)
 router.route('/api/projects/:projectId').get(projectCtrl.read)
 router.route('/api/projects/:projectId').put(projectCtrl.updateById)

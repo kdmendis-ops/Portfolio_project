@@ -1,7 +1,11 @@
+// contact.controller.js implements the CRUD operations behind the
+// /api/contacts routes: create, list, read one, update, delete one,
+// and delete all contacts.
 import Contact from '../models/contact.model.js'
 import extend from 'lodash/extend.js'
 import errorHandler from './error.controller.js'
 
+// POST /api/contacts - create a new contact.
 const create = async (req, res) => {
     const contact = new Contact(req.body)
     try {
@@ -15,6 +19,8 @@ const create = async (req, res) => {
         })
     }
 }
+
+// GET /api/contacts - list all contacts, returning only a few summary fields.
 const list = async (req, res) => {
     try {
         let contacts = await Contact.find().select('firstname lastname email')
@@ -25,6 +31,9 @@ const list = async (req, res) => {
         })
     }
 }
+
+// Route param middleware for :contactId - looks up the contact once and
+// attaches it to req.contact for read/update/remove below.
 const contactByID = async (req, res, next, id) => {
     try {
         let contact = await Contact.findById(id)
@@ -40,16 +49,21 @@ const contactByID = async (req, res, next, id) => {
         })
     }
 }
+
+// GET /api/contacts/:contactId - return the contact looked up by contactByID.
 const read = (req, res) => {
     return res.json(req.contact)
 }
+
+// PUT /api/contacts/:contactId - merge the request body into the existing
+// contact document and save.
 const update = async (req, res) => {
     try {
         let contact = req.contact
         contact = extend(contact, req.body)
         contact.updated = Date.now()
         await contact.save()
-        //user.hashed_password = undefined 
+        //user.hashed_password = undefined
         //user.salt = undefined
         res.json(contact)
     } catch (err) {
@@ -58,6 +72,8 @@ const update = async (req, res) => {
         })
     }
 }
+
+// DELETE /api/contacts/:contactId - remove one contact document.
 const remove = async (req, res) => {
     try {
         let contact = req.contact
@@ -72,6 +88,7 @@ const remove = async (req, res) => {
     }
 }
 
+// DELETE /api/contacts - remove every contact document.
 const removeAll = async (req, res) => {
     try {
         await Contact.deleteMany({})

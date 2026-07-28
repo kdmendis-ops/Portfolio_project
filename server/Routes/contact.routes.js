@@ -1,3 +1,4 @@
+// contact.routes.js defines the CRUD API for contacts.
 // Methods Urls Actions
 // GET api/contacts get all contacts
 // GET api/contacts/:id get contacts by id
@@ -12,6 +13,7 @@ const router = express.Router()
 
 router.route('/api/contacts').post(contactCtrl.create)
 router.route('/api/contacts').get(contactCtrl.list)
+// Runs before any :contactId route to fetch that contact once and attach it to req.
 router.param('contactId', contactCtrl.contactByID)
 router.route('/api/contacts/:contactId').get(contactCtrl.read)
 router.route('/api/contacts/:contactId').put(contactCtrl.update)

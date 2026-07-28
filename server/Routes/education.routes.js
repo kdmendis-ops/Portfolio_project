@@ -1,3 +1,4 @@
+// education.routes.js defines the CRUD API for education/qualification entries.
 // Methods Urls Actions
 // GET api/qualifications get all qualifications
 // GET api/qualifications/:id get qualifications by id
@@ -12,6 +13,7 @@ const router = express.Router()
 
 router.route('/api/qualifications').post(educationCtrl.create)
 router.route('/api/qualifications').get(educationCtrl.list)
+// Runs before any :qualificationId route to fetch that record once and attach it to req.
 router.param('qualificationId', educationCtrl.educationByID)
 router.route('/api/qualifications/:qualificationId').get(educationCtrl.read)
 router.route('/api/qualifications/:qualificationId').put(educationCtrl.updateById)

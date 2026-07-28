@@ -1,5 +1,10 @@
+// user.model.js defines the Mongoose schema for user accounts. It stores
+// account info plus a salted/hashed password - the plaintext password is
+// never persisted: assigning to the virtual `password` field generates a
+// per-user salt and stores only the HMAC-SHA1 digest in hashed_password.
 import mongoose from 'mongoose'
 import crypto from 'crypto'
+//const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -12,6 +17,15 @@ const UserSchema = new mongoose.Schema({
         unique: 'Email already exists',
         match: [/.+\@.+\..+/, 'Please fill a valid email address'],
         required: 'Email is required'
+    },
+    seller: {
+        type: Boolean,
+        default: false
+    },
+    role: {
+        type: String,
+        enum: ['user', 'Admin'],
+        default: 'user'
     },
     created: {
         type: Date,
@@ -31,12 +45,13 @@ UserSchema.virtual('password')
     .set(function (password) {
         this._password = password;
         this.salt = this.makeSalt();
-        // this.hashed_password = password;
-        this.hashed_password = this.encryptPassword(password);
+        this.hashed_password = this.encryptPassword(password)
+        //this.hashed_password = password;
+        console.log(this.hashed_password)
     })
     .get(function () {
-        return this._password;
-    });
+        return this._password
+    })
 UserSchema.path('hashed_password').validate(function (v) {
     if (this._password && this._password.length < 6) {
         this.invalidate('password', 'Password must be at least 6 characters.');
@@ -45,7 +60,6 @@ UserSchema.path('hashed_password').validate(function (v) {
         this.invalidate('password', 'Password is required');
     }
 }, null);
-
 UserSchema.methods = {
     authenticate: function (plainText) {
         return this.encryptPassword(plainText) === this.hashed_password
@@ -58,6 +72,7 @@ UserSchema.methods = {
                 .update(password)
                 .digest('hex')
         } catch (err) {
+            console.log(err);
             return ''
         }
     },
@@ -65,7 +80,7 @@ UserSchema.methods = {
         return Math.round((new Date().valueOf() * Math.random())) + ''
     }
 }
-
-
+//module.exports = mongoose.model('User', UserSchema);
 export default mongoose.model('User', UserSchema);
+
 

@@ -1,3 +1,5 @@
+// contact.model.js defines the Mongoose schema for a simple contact:
+// first name, last name, and a unique email address.
 import mongoose from 'mongoose'
 //const mongoose = require('mongoose');
 const ContactSchema = new mongoose.Schema({

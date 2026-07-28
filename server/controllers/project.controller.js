@@ -1,3 +1,6 @@
+// project.controller.js implements the CRUD operations behind the
+// /api/projects routes: create, list, read one, update, delete one,
+// and delete all portfolio projects.
 // projects
 
 // Methods Urls Actions
@@ -12,6 +15,7 @@ import Project from '../models/project.model.js'
 import extend from 'lodash/extend.js'
 import errorHandler from './error.controller.js'
 
+// POST /api/projects - create a new project.
 const create = async (req, res) => {
     const project = new Project(req.body)
     try {
@@ -25,6 +29,8 @@ const create = async (req, res) => {
         })
     }
 }
+
+// GET /api/projects - list all projects with select fields.
 const list = async (req, res) => {
     try {
         let projects = await Project.find().select('title firstname lastname email completion description')
@@ -35,6 +41,9 @@ const list = async (req, res) => {
         })
     }
 }
+
+// Route param middleware for :projectId - looks up the project once and
+// attaches it to req.project for read/updateById/removeById below.
 const projectByID = async (req, res, next, id) => {
     try {
         let project = await Project.findById(id)
@@ -51,10 +60,13 @@ const projectByID = async (req, res, next, id) => {
     }
 }
 
+// GET /api/projects/:projectId - return the project looked up by projectByID.
 const read = (req, res) => {
     return res.json(req.project)
 }
 
+// PUT /api/projects/:projectId - merge the request body into the existing
+// project document and save.
 const updateById = async (req, res) => {
     try {
         let project = req.project
@@ -68,6 +80,8 @@ const updateById = async (req, res) => {
         })
     }
 }
+
+// DELETE /api/projects/:projectId - remove one project document.
 const removeById = async (req, res) => {
     try {
         let project = req.project
@@ -79,6 +93,8 @@ const removeById = async (req, res) => {
         })
     }
 }
+
+// DELETE /api/projects - remove every project document.
 const removeAll = async (req, res) => {
     try {
         let deletedProjects = await Project.deleteMany({})

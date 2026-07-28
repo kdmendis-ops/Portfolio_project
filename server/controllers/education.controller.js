@@ -1,3 +1,6 @@
+// education.controller.js implements the CRUD operations behind the
+// /api/qualifications routes: create, list, read one, update, delete one,
+// and delete all education/qualification records.
 import Education from '../models/education.model.js'
 import extend from 'lodash/extend.js'
 import errorHandler from './error.controller.js'
@@ -10,6 +13,7 @@ import errorHandler from './error.controller.js'
 // DELETE api/qualifications/:id remove qualification by id
 // DELETE api/qualifications remove all qualifications
 
+// POST /api/qualifications - create a new education record.
 const create = async (req, res) => {
     const education = new Education(req.body)
     try {
@@ -23,6 +27,8 @@ const create = async (req, res) => {
         })
     }
 }
+
+// GET /api/qualifications - list all education records with select fields.
 const list = async (req, res) => {
     try {
         let educations = await Education.find().select('title firstname lastname email completion description')
@@ -33,6 +39,9 @@ const list = async (req, res) => {
         })
     }
 }
+
+// Route param middleware for :qualificationId - looks up the record once
+// and attaches it to req.education for read/updateById/removeById below.
 const educationByID = async (req, res, next, id) => {
     try {
         let education = await Education.findById(id)
@@ -49,10 +58,13 @@ const educationByID = async (req, res, next, id) => {
     }
 }
 
+// GET /api/qualifications/:qualificationId - return the record looked up by educationByID.
 const read = (req, res) => {
     return res.json(req.education)
 }
 
+// PUT /api/qualifications/:qualificationId - merge the request body into
+// the existing record and save.
 const updateById = async (req, res) => {
     try {
         let education = req.education
@@ -68,6 +80,7 @@ const updateById = async (req, res) => {
     }
 }
 
+// DELETE /api/qualifications/:qualificationId - remove one education record.
 const removeById = async (req, res) => {
     try {
         let education = req.education
@@ -80,6 +93,7 @@ const removeById = async (req, res) => {
     }
 }
 
+// DELETE /api/qualifications - remove every education record.
 const removeAll = async (req, res) => {
     try {
         let deletedEducations = await Education.deleteMany({})

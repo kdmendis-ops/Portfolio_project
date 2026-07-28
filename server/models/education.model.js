@@ -11,6 +11,8 @@
 import mongoose from 'mongoose'
 const { Schema } = mongoose
 
+// Mongoose schema describing one education/qualification entry, with a
+// completion date and free-text description.
 const educationSchema = new Schema({
     title: {
         type: String,

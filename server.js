@@ -5,22 +5,27 @@
 import config from './config/config.js'
 import app from './server/express.js'
 import mongoose from 'mongoose'
+// Use the native Promise implementation for Mongoose's async operations.
 mongoose.Promise = global.Promise
+// Open the connection to MongoDB using the URI from config.
 mongoose.connect(config.mongoUri, {
     //useNewUrlParser: true,
-    //useCreateIndex: true, 
+    //useCreateIndex: true,
     //useUnifiedTopology: true
 })
     .then(() => {
         console.log("Connected to the database!");
     })
 
+// If the connection drops or fails after the initial connect, fail loudly.
 mongoose.connection.on('error', () => {
     throw new Error(`unable to connect to database: ${config.mongoUri}`)
 })
+// A basic health-check / landing route for the API root.
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to User application." });
 });
+// Start listening for HTTP requests on the configured port.
 app.listen(config.port, (err) => {
     if (err) {
         console.log(err)

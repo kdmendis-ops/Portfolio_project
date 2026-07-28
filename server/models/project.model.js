@@ -9,6 +9,9 @@
 // description string
 
 import mongoose from 'mongoose'
+
+// Mongoose schema describing one portfolio project, with a completion
+// date and free-text description.
 const ProjectSchema = new mongoose.Schema({
    title: {
       type: String,
