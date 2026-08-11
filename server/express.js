@@ -1,5 +1,7 @@
 // The express.js file sets up the Express application and configures middleware for handling requests. It includes body-parser for parsing JSON and URL-encoded data, cookie-parser for handling cookies, compression for gzip compression, helmet for security headers, and cors for enabling Cross-Origin Resource Sharing. The configured Express app is then exported for use in the server entry point (index.js).
 import express from 'express'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import compress from 'compression'
@@ -12,6 +14,7 @@ import educationRoutes from './Routes/education.routes.js'
 import projectRoutes from './Routes/project.routes.js'
 import shopRoutes from './Routes/shop.routes.js'
 import productRoutes from './Routes/product.routes.js'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 // Parse incoming JSON and URL-encoded request bodies into req.body.
 app.use(express.json());
@@ -32,10 +35,23 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 // Gzip-compress responses to reduce payload size.
 app.use(compress())
-// Set a collection of security-related HTTP headers.
-app.use(helmet())
+// Set a collection of security-related HTTP headers. CSP is disabled because
+// its default policy blocks the <style> tags MUI/emotion injects at runtime,
+// which would break the app's styling once served from here in production.
+app.use(helmet({ contentSecurityPolicy: false }))
 // Allow cross-origin requests (needed since the client runs on a different port).
 app.use(cors())
+
+// Serve the built client (run `npm run build` inside /client) as static
+// files, then fall back to index.html for any non-API route so React
+// Router can handle client-side navigation. This lets the whole app ship
+// as a single web service.
+const clientBuildPath = path.join(__dirname, '..', 'client', 'dist')
+app.use(express.static(clientBuildPath))
+app.get(/^(?!\/api|\/auth).*/, (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'))
+})
+
 // Centralized error handler: express-jwt throws 'UnauthorizedError' when a
 // route's JWT check fails, so that gets its own 401; everything else is a 400.
 app.use((err, req, res, next) => {

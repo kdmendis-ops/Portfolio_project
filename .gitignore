@@ -34,3 +34,8 @@ build/
 # Misc
 *.local
 coverage/
+
+# Cypress
+client/cypress/videos/
+client/cypress/screenshots/
+client/cypress/downloads/

@@ -21,10 +21,6 @@ mongoose.connect(config.mongoUri, {
 mongoose.connection.on('error', () => {
     throw new Error(`unable to connect to database: ${config.mongoUri}`)
 })
-// A basic health-check / landing route for the API root.
-app.get("/", (req, res) => {
-    res.json({ message: "Welcome to User application." });
-});
 // Start listening for HTTP requests on the configured port.
 app.listen(config.port, (err) => {
     if (err) {
